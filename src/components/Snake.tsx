@@ -19,13 +19,11 @@ const Snake = ({ snake }: { snake: Coordinates[] }) => {
 
 const styles = StyleSheet.create({
   snake: {
-    width: 15,
-    height: 15,
+    width: 10,
+    height: 10,
     backgroundColor: Colors.primary,
     position: 'absolute',
-    borderRadius: 10,
-    borderColor: Colors.primary,
-    borderWidth: 1,
+    borderRadius: 5,
   },
 });
 

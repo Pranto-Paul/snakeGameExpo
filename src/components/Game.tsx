@@ -5,6 +5,7 @@ import { PanGestureHandler } from 'react-native-gesture-handler';
 import { Coordinates, Direction, GestureEventType } from '../types/types';
 import { useEffect, useState } from 'react';
 import Snake from './Snake';
+import { checkGameOver } from '../utils/gameOver';
 
 const SNAKE_INITIAL_POSITION = [{ x: 10, y: 10 }];
 const FOOD_INITIAL_POSITION = { x: 20, y: 20 };
@@ -21,15 +22,23 @@ const Game = () => {
   const [isPaused, setIsPaused] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!isGameOver) {
-      const intervalId = setInterval(moveSnake, MOVE_INTERVAL);
+    if (!isGameOver && size.width > 0) {
+      const intervalId = setInterval(
+        () => !isPaused && moveSnake(),
+        MOVE_INTERVAL,
+      );
       return () => clearInterval(intervalId);
     }
-  }, [snake, isGameOver, isPaused]);
+  }, [snake, isGameOver, isPaused, size]);
 
   const moveSnake = () => {
     const snakeHead = snake[0];
     const newHead = { x: snakeHead.x, y: snakeHead.y };
+
+    if (checkGameOver(snakeHead, GAME_BOUNDS)) {
+      setIsGameOver((prev) => !prev);
+      return;
+    }
 
     switch (direction) {
       case Direction.Up:
@@ -47,17 +56,22 @@ const Game = () => {
       default:
         break;
     }
-    setSnake([newHead, ...snake]);
+    setSnake([newHead, ...snake.slice(0, -1)]);
   };
 
   const onLayout = (event: {
     nativeEvent: { layout: { width: number; height: number } };
   }) => {
     const { width, height } = event.nativeEvent.layout;
-    // console.log(width, height);
+    console.log(width, height);
     setSize({ width, height });
   };
-  const GAME_BOUNDS = { xMin: 0, yMin: 0, xMax: size.width, yMax: size.height };
+  const GAME_BOUNDS = {
+    xMin: 0,
+    yMin: 0,
+    xMax: Math.floor(size.width / 10),
+    yMax: Math.floor(size.height / 10),
+  };
   const handleGesture = (event: GestureEventType) => {
     const { translationX, translationY } = event.nativeEvent;
 
@@ -77,8 +91,8 @@ const Game = () => {
   };
   return (
     <PanGestureHandler onGestureEvent={handleGesture}>
-      <SafeAreaView onLayout={onLayout} style={styles.container}>
-        <View style={styles.boundaries}>
+      <SafeAreaView style={styles.container}>
+        <View onLayout={onLayout} style={styles.boundaries}>
           <Snake snake={snake} />
         </View>
       </SafeAreaView>
@@ -93,9 +107,11 @@ const styles = StyleSheet.create({
   },
   boundaries: {
     flex: 1,
-    borderWidth: 2,
-    borderColor: Colors.primary,
+    margin: 16,
+    borderWidth: 4,
+    borderColor: '#e11d48',
     backgroundColor: Colors.background,
+    borderRadius: 8,
   },
 });
 
