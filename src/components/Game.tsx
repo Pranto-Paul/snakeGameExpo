@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Colors } from '../styles/Colors';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import { Coordinates, Direction, GestureEventType } from '../types/types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Snake from './Snake';
 
 const SNAKE_INITIAL_POSITION = [{ x: 10, y: 10 }];
@@ -19,6 +19,36 @@ const Game = () => {
   const [score, setScore] = useState<number>(0);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!isGameOver) {
+      const intervalId = setInterval(moveSnake, MOVE_INTERVAL);
+      return () => clearInterval(intervalId);
+    }
+  }, [snake, isGameOver, isPaused]);
+
+  const moveSnake = () => {
+    const snakeHead = snake[0];
+    const newHead = { x: snakeHead.x, y: snakeHead.y };
+
+    switch (direction) {
+      case Direction.Up:
+        newHead.y -= 1;
+        break;
+      case Direction.Down:
+        newHead.y += 1;
+        break;
+      case Direction.Left:
+        newHead.x -= 1;
+        break;
+      case Direction.Right:
+        newHead.x += 1;
+        break;
+      default:
+        break;
+    }
+    setSnake([newHead, ...snake]);
+  };
 
   const onLayout = (event: {
     nativeEvent: { layout: { width: number; height: number } };
