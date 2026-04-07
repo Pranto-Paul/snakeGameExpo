@@ -8,9 +8,10 @@ import Snake from './Snake';
 import Food from './Food';
 import { checkGameOver } from '../utils/gameOver';
 
-const SNAKE_INITIAL_POSITION = [{ x: 10, y: 10 }];
-const FOOD_INITIAL_POSITION = { x: 20, y: 20 };
-const MOVE_INTERVAL = 50;
+const GRID_SIZE = 20;
+const SNAKE_INITIAL_POSITION = [{ x: 5, y: 5 }];
+const FOOD_INITIAL_POSITION = { x: 10, y: 10 };
+const MOVE_INTERVAL = 100;
 const SCORE_INCREMENT = 10;
 
 const Game = () => {
@@ -89,8 +90,8 @@ const Game = () => {
   const GAME_BOUNDS = {
     xMin: 0,
     yMin: 0,
-    xMax: Math.floor(size.width / 10),
-    yMax: Math.floor(size.height / 10),
+    xMax: Math.floor(size.width / GRID_SIZE),
+    yMax: Math.floor(size.height / GRID_SIZE),
   };
   const handleGesture = (event: GestureEventType) => {
     const { translationX, translationY } = event.nativeEvent;
@@ -143,43 +144,56 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 10,
     alignItems: 'center',
+    paddingBottom: 10,
   },
   scoreText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: Colors.background,
+    fontSize: 24,
+    fontWeight: '800',
+    color: Colors.text,
+    letterSpacing: 1.5,
   },
   boundaries: {
     flex: 1,
-    margin: 16,
+    marginHorizontal: 16,
+    marginBottom: 16,
     borderWidth: 4,
-    borderColor: '#e11d48',
+    borderColor: Colors.tertiary, // neon pink/red border 
     backgroundColor: Colors.background,
-    borderRadius: 8,
+    borderRadius: 16, // Smoother corners for modern look
   },
   gameOverOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: 'rgba(15, 23, 42, 0.85)', // Darker, opaque slate overlay
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
+    borderRadius: 16,
+    margin: 16, // Match the board margin
   },
   gameOverTitle: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#e11d48',
+    fontSize: 48,
+    fontWeight: '900',
+    color: Colors.tertiary,
     marginBottom: 10,
+    textShadowColor: Colors.tertiary,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 10,
   },
   restartButton: {
-    marginTop: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    marginTop: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
     backgroundColor: Colors.secondary,
     color: Colors.primary,
-    fontWeight: 'bold',
-    fontSize: 18,
-    borderRadius: 8,
+    fontWeight: '900',
+    fontSize: 20,
+    borderRadius: 12,
     overflow: 'hidden',
+    shadowColor: Colors.secondary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 8,
+    elevation: 6,
   },
 });
 
